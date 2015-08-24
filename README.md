@@ -73,12 +73,16 @@ is king.
 ```
 go test . -bench=.
 PASS
-BenchmarkGolang_Logger-4                 3000000               518 ns/op
-BenchmarkReadable_KeyValue-4             1000000              1210 ns/op
-BenchmarkReadable_Join-4                 1000000              1213 ns/op
-BenchmarkReadable_WithSETTER-4           1000000              1713 ns/op
-BenchmarkReadable_TwoWithSETTERs-4       1000000              1883 ns/op
-ok      github.com/jmervine/readable    8.267s
+Benchmark_Builtin_Logger-4                       3000000               529 ns/op
+Benchmark_KeyValue_Log-4                         1000000              1217 ns/op
+Benchmark_KeyValue_LogSafe-4                     1000000              1312 ns/op
+Benchmark_Join_Log-4                             1000000              1222 ns/op
+Benchmark_Join_LogSafe-4                         1000000              1320 ns/op
+Benchmark_KeyValue_WithSETTER_Log-4              1000000              1715 ns/op
+Benchmark_KeyValue_WithSETTER_LogSafe-4          1000000              1794 ns/op
+Benchmark_KeyValue_WithSETTERs_Log-4             1000000              1860 ns/op
+Benchmark_KeyValue_WithSETTERs_LogSafe-4         1000000              1965 ns/op
+ok      github.com/jmervine/readable    14.919s
 ```
 
 ## MIT Licence
