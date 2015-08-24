@@ -1,5 +1,7 @@
 language: go
 script: make test
+install:
+  - go get -v github.com/jmervine/GoT
 
 go:
   - 1.4
