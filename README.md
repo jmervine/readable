@@ -41,13 +41,17 @@ func main() {
 
 ## performance
 
-`readable` performs at about 1/2 the speed of the default logger, e.g.:
+`readable` performs a little slower then the default Go logger. `With{*}` setter
+convience methods, do impact performance, so keep that in mind where performance
+is king.
 
 ```
 go test . -bench=.
 PASS
-BenchmarkGolang_Logger-4         2000000               846 ns/op
-BenchmarkReadable_KeyValue-4     1000000              1776 ns/op
-BenchmarkReadable_Join-4         1000000              1887 ns/op
-ok      github.com/jmervine/readable    7.229s
+BenchmarkGolang_Logger-4                 3000000               518 ns/op
+BenchmarkReadable_KeyValue-4             1000000              1210 ns/op
+BenchmarkReadable_Join-4                 1000000              1213 ns/op
+BenchmarkReadable_WithSETTER-4           1000000              1713 ns/op
+BenchmarkReadable_TwoWithSETTERs-4       1000000              1883 ns/op
+ok      github.com/jmervine/readable    8.267s
 ```
