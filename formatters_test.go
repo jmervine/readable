@@ -13,8 +13,6 @@ type TestStruct struct {
 }
 
 func TestReadable_KeyValue(T *testing.T) {
-	T.Parallel()
-
 	str := KeyValue("foo", "bar", 1)
 	exp := "foo=bar 1"
 	Go(T).AssertEqual(str, exp)
@@ -38,8 +36,6 @@ func TestReadable_KeyValue(T *testing.T) {
 }
 
 func TestReadable_Join(T *testing.T) {
-	T.Parallel()
-
 	str := Join("foo", "bar", 1)
 	exp := "foo: bar 1"
 	Go(T).AssertEqual(str, exp)

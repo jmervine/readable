@@ -14,10 +14,15 @@ import (
 
 // HELPERS:
 
+func reset() {
+	std = New()
+}
+
 func stubLogger() (*bytes.Buffer, *Readable) {
 	b := new(bytes.Buffer)
 	r := new(Readable)
 	r.logger = log.New(b, "", 0)
+	r.formatter = KeyValue
 	return b, r
 }
 
@@ -50,6 +55,8 @@ func TestReadable_SetDebug(T *testing.T) {
 }
 
 func TestSetDebug(T *testing.T) {
+	reset()
+
 	Go(T).AssertEqual(std.debug, false)
 
 	SetDebug(true)
@@ -77,6 +84,8 @@ func TestReadable_SetFormatter(T *testing.T) {
 }
 
 func TestSetFormatter(T *testing.T) {
+	reset()
+
 	Go(T).AssertEqual(std.formatter, KeyValue)
 	SetFormatter(noopFormatter)
 	Go(T).AssertEqual(std.formatter, noopFormatter)
@@ -96,6 +105,8 @@ func TestReadable_SetPrefix(T *testing.T) {
 }
 
 func TestSetPrefix(T *testing.T) {
+	reset()
+
 	SetPrefix("prefix")
 
 	Go(T).AssertEqual(std.prefix, "prefix")
@@ -106,7 +117,7 @@ func TestReadable_WithOutput(T *testing.T) {
 
 	var b1 = new(bytes.Buffer)
 	var b2 = new(bytes.Buffer)
-	r.logger.SetOutput(b1)
+	r.logger = log.New(b1, "", 0)
 
 	r.WithOutput(b2).logger.Print("foo")
 
@@ -125,6 +136,8 @@ func TestReadable_SetOutput(T *testing.T) {
 }
 
 func TestSetOutput(T *testing.T) {
+	reset()
+
 	var b = new(bytes.Buffer)
 	SetOutput(b)
 	std.logger.Print("foo")
@@ -137,10 +150,10 @@ func TestReadable_WithFlags(T *testing.T) {
 	b2 := new(bytes.Buffer)
 
 	r1 := New()
-	r1.logger.SetOutput(b1)
+	r1.logger = log.New(b1, "", log.LstdFlags)
 
 	r2 := r1.WithFlags(0)
-	r2.logger.SetOutput(b2)
+	r2.logger = log.New(b2, "", r2.flags)
 
 	r1.logger.Print("foo")
 	r2.logger.Print("foo")
@@ -153,7 +166,7 @@ func TestReadable_SetFlags(T *testing.T) {
 	b := new(bytes.Buffer)
 
 	r := New()
-	r.logger.SetOutput(b)
+	r.logger = log.New(b, "", log.LstdFlags)
 
 	r.SetFlags(0)
 	r.logger.Print("foo=bar")
@@ -162,33 +175,19 @@ func TestReadable_SetFlags(T *testing.T) {
 }
 
 func TestSetFlags(T *testing.T) {
+	reset()
+
 	b := new(bytes.Buffer)
-	std.logger.SetOutput(b)
+	std.logger = log.New(b, "", log.LstdFlags)
 	SetFlags(0)
 
 	std.logger.Print("foo")
 	Go(T).AssertEqual(b.String(), "foo\n")
 }
 
-func TestReadable_Reset(T *testing.T) {
-	r := New()
-
-	r.SetFormatter(noopFormatter)
-	Go(T).AssertEqual(r.formatter, noopFormatter)
-
-	r.Reset()
-	Go(T).AssertEqual(r.formatter, KeyValue)
-}
-
-func TestReset(T *testing.T) {
-	SetFormatter(noopFormatter)
-	Go(T).AssertEqual(std.formatter, noopFormatter)
-
-	Reset()
-	Go(T).AssertEqual(std.formatter, KeyValue)
-}
-
 func TestLog(T *testing.T) {
+	reset()
+
 	b := new(bytes.Buffer)
 	SetOutput(b)
 
@@ -224,16 +223,6 @@ func TestReadable_clone(T *testing.T) {
 	Go(T).RefuteEqual(r1.prefix, r2.prefix)
 }
 
-func TestReadable_ensure(T *testing.T) {
-	r := new(Readable)
-	Go(T).AssertNil(r.logger)
-	Go(T).AssertNil(r.formatter)
-
-	r.ensure()
-	Go(T).RefuteNil(r.logger)
-	Go(T).RefuteNil(r.formatter)
-}
-
 func TestReadable_prepLine(T *testing.T) {
 	logger := New()
 	str := logger.prepLine("foo", "bar", 1)
@@ -244,6 +233,8 @@ func TestReadable_prepLine(T *testing.T) {
 // MISC
 
 func TestReadable_ThreadSafty(T *testing.T) {
+	reset()
+
 	var b = new(bytes.Buffer)
 
 	var wait sync.WaitGroup

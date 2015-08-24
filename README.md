@@ -4,8 +4,6 @@
 
 [![GoDoc](https://godoc.org/gopkg.in/jmervine/readable.v1?status.png)](https://godoc.org/gopkg.in/jmervine/readable.v1) [![Build Status](https://travis-ci.org/jmervine/readable.svg?branch=master)](https://travis-ci.org/jmervine/readable)
 
-### NOTE: `readable` currently only supports Go 1.5+
-
 ## usage
 
 ```go

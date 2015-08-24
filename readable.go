@@ -46,12 +46,26 @@ type Readable struct {
 	prefix    interface{}
 	formatter func(...interface{}) string
 	debug     bool
+
+	// support go 1.4
+	//
+	// cache logger values locally
+	flags  int
+	output io.Writer
 }
 
 // New creates a new Readable
 func New() *Readable {
-	r := new(Readable)
-	r.ensure()
+	out := os.Stderr
+	flg := log.LstdFlags
+	r := &Readable{
+		logger:    log.New(out, "", flg),
+		formatter: KeyValue,
+
+		// supporting go 1.4
+		flags:  flg,
+		output: out,
+	}
 
 	return r
 }
@@ -125,8 +139,16 @@ func (r *Readable) WithOutput(w io.Writer) *Readable {
 
 // SetOutput sets the output writer.
 func (r *Readable) SetOutput(w io.Writer) *Readable {
-	r.logger.SetOutput(w)
+	r.output = w
+
+	// support go v1.4 for now
+	r.logger = nil
+	r.logger = log.New(r.output, "", r.flags)
 	return r
+
+	// commenting out go v1.5 simpler method
+	//r.logger.SetOutput(w)
+	//return r
 }
 
 // SetOutput sets the output writer for the default logger.
@@ -144,6 +166,9 @@ func (r *Readable) WithFlags(f int) *Readable {
 
 // SetFlags sets log.Logger flags, see log package for details.
 func (r *Readable) SetFlags(f int) *Readable {
+	// support go 1.4
+	r.flags = f
+
 	r.logger.SetFlags(f)
 	return r
 }
@@ -152,20 +177,6 @@ func (r *Readable) SetFlags(f int) *Readable {
 // for details.
 func SetFlags(f int) {
 	std.SetFlags(f)
-}
-
-// Reset resets the logger, formatter and prefix values to defaults.
-func (r *Readable) Reset() {
-	r.logger = nil
-	r.formatter = nil
-	r.ensure()
-	r.prefix = ""
-}
-
-// Reset resets the default logger's logger, formatter and prefix values
-// to defaults.
-func Reset() {
-	std.Reset()
 }
 
 // Log formats and calls log.Print.
@@ -220,21 +231,8 @@ func (r *Readable) clone() *Readable {
 	return n
 }
 
-// ensure ensures that required values are set
-func (r *Readable) ensure() {
-	if r.logger == nil {
-		r.logger = logLogger()
-	}
-
-	if r.formatter == nil {
-		r.formatter = KeyValue
-	}
-}
-
 // prepLine sets up the output string using the current formatter
 func (r *Readable) prepLine(parts ...interface{}) string {
-	r.ensure()
-
 	var output string
 	if r.prefix == nil || r.prefix == "" {
 		output = fmt.Sprintf("%s", r.formatter(parts...))
