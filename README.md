@@ -8,8 +8,8 @@
 
 The [Go `log` package](http://godoc.org/log), which is the underlying implementation is suppose to be thread safe,
 however, with my testing, when using buffers ([`bytes.Buffer`](http://godoc.org/bytes#Buffer)), it proved not to be in conjunction
-with `With{*}` style setters. This shouldn't be an issue when  [`os.Stdout`](http://godoc.org/os#Stdout) and
-[`os.Stderr`](http://godoc.org/os#Stderr) should be as safe as the standard `log` package.
+with `With{*}` style setters. This shouldn't be an issue when using [`os.Stdout`](http://godoc.org/os#Stdout) and
+[`os.Stderr`](http://godoc.org/os#Stderr), as they should be as safe as the standard `log` package.
 
 To be safe, I've added `LogSafe` as a guaranteed thread safe logger, but it's a little slower than the standard logging.
 Additionally, this should be used when using `With{*}` style setters in line, to ensure thread safety. Otherwise, there's
