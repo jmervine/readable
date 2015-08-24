@@ -23,18 +23,18 @@ func main() {
     readable.Log("type", "with Join formatter", "fn", "Log")
     // type: with Join formatter fn: Log
 
-    logger := readable.New().WithPrefix("logger")
-    debugger := readable.New().WithDebug().WithPrefix("debugger")
+    logger := readable.New().WithPrefix("[INFO]:")
+    debugger := readable.New().WithDebug().WithPrefix("[DEBUG]:")
 
     logger.Log("type", "logger", "fn", "Log")
     logger.Debug("type", "logger", "fn", "Debug")
     logger.WithDebug().Debug("type", "logger", "fn", "WithDebug().Debug")
-    // 2015/08/23 19:17:38 logger type=logger fn=Log
-    // 2015/08/23 19:17:38 logger type=logger fn=WithDebug().Debug
+    // 2015/08/23 19:17:38 [INFO]: type=logger fn=Log
+    // 2015/08/23 19:17:38 [INFO]: type=logger fn=WithDebug().Debug
 
-    debugger.Log("type", "logger", "fn", "Log")
-    debugger.Debug("type", "logger", "fn", "Debug")
-    // 2015/08/23 19:17:38 debugger type=logger fn=Log
-    // 2015/08/23 19:17:38 debugger type=logger fn=Debug
+    debugger.Log("type", "debugger", "fn", "Log")
+    debugger.Debug("type", "debuger", "fn", "Debug")
+    // 2015/08/23 19:17:38 [DEBUG]: type=debugger fn=Log
+    // 2015/08/23 19:17:38 [DEBUG]: type=debugger fn=Debug
 }
 ```
