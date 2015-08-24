@@ -31,12 +31,10 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync"
 )
 
-// create a new log.Logger
-func logLogger() *log.Logger {
-	return log.New(os.Stderr, "", log.LstdFlags)
-}
+var mutex = sync.Mutex{}
 
 // default Readable
 var std = New()
@@ -187,6 +185,19 @@ func (r *Readable) Log(parts ...interface{}) {
 // Log formats and calls log.Print using the default logger.
 func Log(parts ...interface{}) {
 	std.Log(parts...)
+}
+
+// LogSafe guarentees thread safety at a small cost to performance.
+func (r *Readable) LogSafe(parts ...interface{}) {
+	mutex.Lock()
+	defer mutex.Unlock()
+	r.Log(parts...)
+}
+
+// LogSafe guarentees thread safety at a small cost to performance using the
+// default logger.
+func LogSafe(parts ...interface{}) {
+	std.LogSafe(parts...)
 }
 
 // Print is an alias to Log

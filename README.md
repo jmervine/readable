@@ -1,8 +1,33 @@
 # readable
 
-`readable` is a simple Golang logger based loosely on the 12 Factor Logs (http://12factor.net/logs)
+`readable` is a simple Golang logger based loosely on the 12 Factor Logs (http://12factor.net/logs) and backed by Goalng's built in `log` package.
 
 [![GoDoc](https://godoc.org/gopkg.in/jmervine/readable.v1?status.png)](https://godoc.org/gopkg.in/jmervine/readable.v1) [![Build Status](https://travis-ci.org/jmervine/readable.svg?branch=master)](https://travis-ci.org/jmervine/readable)
+
+## notes on thread safety
+
+The [Go `log` package](http://godoc.org/log), which is the underlying implementation is suppose to be thread safe,
+however, with my testing, when using buffers ([`bytes.Buffer`](http://godoc.org/bytes#Buffer)), it proved not to be in conjunction
+with `With{*}` style setters. This shouldn't be an issue when  [`os.Stdout`](http://godoc.org/os#Stdout) and
+[`os.Stderr`](http://godoc.org/os#Stderr) should be as safe as the standard `log` package.
+
+To be safe, I've added `LogSafe` as a guaranteed thread safe logger, but it's a little slower than the standard logging.
+Additionally, this should be used when using `With{*}` style setters in line, to ensure thread safety. Otherwise, there's
+a good chance it won't be, as stated above. Example:
+
+```go
+// maybe not safe
+go func() {
+    readable.WithPrefix("foo").Log("bar")
+    // do stuff
+}()
+
+// guaranteed safe
+go func() {
+    readable.WithPrefix("foo").LogSafe("bar")
+    // do stuff
+}()
+```
 
 ## usage
 
@@ -42,7 +67,7 @@ func main() {
 ## performance
 
 `readable` performs a little slower then the default Go logger. `With{*}` setter
-convience methods, do impact performance, so keep that in mind where performance
+convenience methods, do impact performance, so keep that in mind where performance
 is king.
 
 ```
@@ -54,4 +79,27 @@ BenchmarkReadable_Join-4                 1000000              1213 ns/op
 BenchmarkReadable_WithSETTER-4           1000000              1713 ns/op
 BenchmarkReadable_TwoWithSETTERs-4       1000000              1883 ns/op
 ok      github.com/jmervine/readable    8.267s
+```
+
+## MIT Licence
+
+```
+Copyright (c) 2015 Joshua P. Mervine
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```

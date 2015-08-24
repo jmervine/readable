@@ -22,6 +22,14 @@ func BenchmarkReadable_KeyValue(b *testing.B) {
 	}
 }
 
+func BenchmarkReadable_KeyValue_LogSafe(b *testing.B) {
+	buf := new(bytes.Buffer)
+	r := New().WithOutput(buf)
+	for n := 0; n < b.N; n++ {
+		r.LogSafe("foo", "bar")
+	}
+}
+
 func BenchmarkReadable_Join(b *testing.B) {
 	buf := new(bytes.Buffer)
 	r := New().WithOutput(buf).WithFormatter(Join)

@@ -232,7 +232,7 @@ func TestReadable_prepLine(T *testing.T) {
 
 // MISC
 
-func TestReadable_ThreadSafty(T *testing.T) {
+func TestReadable_ThreadSaftyOne(T *testing.T) {
 	reset()
 
 	var b = new(bytes.Buffer)
@@ -256,6 +256,39 @@ func TestReadable_ThreadSafty(T *testing.T) {
 		go func() {
 			defer wait.Done()
 			Log("foo", "bar")
+		}()
+	}
+
+	wait.Wait()
+	Go(T).AssertEqual(b.Len(), exp)
+}
+
+func TestReadable_LogSafe_ThreadSafety(T *testing.T) {
+	reset()
+
+	var b = new(bytes.Buffer)
+
+	var wait sync.WaitGroup
+	var r = New()
+
+	// setup std
+	r.SetOutput(b)
+	r.SetFlags(0)
+
+	var exp int
+
+	// save previous GOMAXPROCS
+	procs := runtime.GOMAXPROCS(0)
+	runtime.GOMAXPROCS(4)
+	defer runtime.GOMAXPROCS(procs)
+
+	for i := 0; i < 10000; i++ {
+		wait.Add(1)
+		exp = exp + 15
+		go func() {
+			defer wait.Done()
+			// With{*} is known to not be thread safe when using Log
+			r.WithPrefix("prefix").LogSafe("foo", "bar")
 		}()
 	}
 
