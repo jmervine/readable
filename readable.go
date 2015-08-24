@@ -4,15 +4,15 @@
 // Examples:
 //
 //  import (
-//      log "github.com/jmervine/readable"
+//      "github.com/jmervine/readable"
 //  )
 //
 //  func main() {
-//      log.SetPrefix("server")
-//      log.Log("listener", ":3000")
+//      readable.SetPrefix("server")
+//      readable.Log("listener", ":3000")
 //      //=> 2015/08/21 20:01:48 server listener=:3000
 //
-//      logger   := log.New().WithPrefix("logger").WithFlags(0)
+//      logger   := readable.New().WithPrefix("logger").WithFlags(0)
 //      debugger := logger.WithDebug().WithPrefix("debug")
 //
 //      logger.Log("type", "log")
