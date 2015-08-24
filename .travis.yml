@@ -1,5 +1,5 @@
 language: go
-script: make test
+script: make travis
 install:
   - go get -v github.com/jmervine/GoT
 
