@@ -2,7 +2,7 @@ package main
 
 import (
 	// "gopkg.in/jmervine/readable.v1"
-	".."
+	"../.."
 )
 
 func main() {

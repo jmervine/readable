@@ -189,6 +189,16 @@ func Log(parts ...interface{}) {
 	std.Log(parts...)
 }
 
+// Print is an alias to Log
+func (r *Readable) Print(parts ...interface{}) {
+	r.Log(parts...)
+}
+
+// Print is an alias to Log
+func Print(parts ...interface{}) {
+	Log(parts...)
+}
+
 // Fatal formats and calls log.Fatal.
 func (r *Readable) Fatal(parts ...interface{}) {
 	r.logger.Fatal(r.prepLine(parts...))
@@ -197,6 +207,16 @@ func (r *Readable) Fatal(parts ...interface{}) {
 // Fatal formats and calls log.Fatal using the default logger.
 func Fatal(parts ...interface{}) {
 	std.Fatal(parts...)
+}
+
+// Panic formats and calls log.Panic.
+func (r *Readable) Panic(parts ...interface{}) {
+	r.logger.Panic(r.prepLine(parts...))
+}
+
+// Panic formats and calls log.Panic using the default logger.
+func Panic(parts ...interface{}) {
+	std.Panic(parts...)
 }
 
 // Debug formats and calls log.Print when debug is true.
