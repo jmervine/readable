@@ -38,3 +38,16 @@ func main() {
     // 2015/08/23 19:17:38 [DEBUG]: type=debugger fn=Debug
 }
 ```
+
+## performance
+
+`readable` performs at about 1/2 the speed of the default logger, e.g.:
+
+```
+go test . -bench=.
+PASS
+BenchmarkGolang_Logger-4         2000000               846 ns/op
+BenchmarkReadable_KeyValue-4     1000000              1776 ns/op
+BenchmarkReadable_Join-4         1000000              1887 ns/op
+ok      github.com/jmervine/readable    7.229s
+```
