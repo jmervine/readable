@@ -21,8 +21,8 @@ func TestReadable_KeyValue(T *testing.T) {
 	exp = `foo=bar true`
 	Go(T).AssertEqual(str, exp)
 
-	str = KeyValue("foo", "bar", "my args", []string{"foo", "bar"})
-	exp = `foo=bar "my args"="[foo bar]"`
+	str = KeyValue("foo", "bar", "args", []string{"foo", "bar"})
+	exp = `foo=bar args="[foo bar]"`
 	Go(T).AssertEqual(str, exp)
 
 	str = KeyValue("foo", "bar bin", "struct", TestStruct{"foo", 9, false})
@@ -32,7 +32,7 @@ func TestReadable_KeyValue(T *testing.T) {
 	// weird one
 	obj := TestStruct{"foo", 9, false}
 	str = KeyValue(obj, obj)
-	exp = `"{A:foo B:9 C:false}"="{A:foo B:9 C:false}"`
+	exp = `{A:foo B:9 C:false}="{A:foo B:9 C:false}"`
 }
 
 func TestReadable_Join(T *testing.T) {

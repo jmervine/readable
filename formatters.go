@@ -22,12 +22,16 @@ func KeyValue(parts ...interface{}) (line string) {
 		return s
 	}
 
+	if len(parts) == 1 {
+		return fmt.Sprintf("%+v", parts[0])
+	}
+
 	for i := 0; i < len(parts); i++ {
 		if i%2 == 0 {
 			if i == len(parts)-1 {
 				segments = append(segments, quote(parts[i]))
 			} else {
-				segments = append(segments, fmt.Sprintf("%s=%s", quote(parts[i]), quote(parts[i+1])))
+				segments = append(segments, fmt.Sprintf("%s=%s", parts[i], quote(parts[i+1])))
 			}
 		}
 
