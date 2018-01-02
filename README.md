@@ -1,3 +1,6 @@
+> ## Archiving this in favor of https://github.com/sirupsen/logrus
+
+
 # readable
 
 `readable` is a simple Golang logger based loosely on the 12 Factor Logs (http://12factor.net/logs) and backed by Goalng's built in `log` package.
